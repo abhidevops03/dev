@@ -1,0 +1,47 @@
+- name: Install Jenkins
+  hosts: localhost
+  remote_user: devops
+  become: yes
+
+  tasks:
+    - name: Import Jenkins key
+      apt_key:
+        url: https://pkg.jenkins.io/debian/jenkins.io-2023.key
+        state: present
+
+    - name: echo test
+      command: echo "deb [signed-by=/usr/share/keyrings/jenkins-keyring.asc]"
+    
+    - name: Jenkins repo add
+      apt_repository:
+        repo: 'deb https://pkg.jenkins.io/debian binary/'
+        state: present
+
+    - name: update apt repo
+      command: sudo apt -y upgrade
+
+    - name: Install fontconfig
+      apt:
+        name: fontconfig
+        state: latest
+
+    - name: Install Java17
+      apt:
+        name: openjdk-17-jre
+        state: latest
+
+    - name: Install jenkins service
+      apt:
+        name: jenkins
+        state: latest
+
+    - name: enable the Jenkins to run as system service
+      service:
+        name: jenkins
+        enabled: yes
+
+    - name: start the Jenkins
+      service:
+        name: jenkins
+        state: started
+

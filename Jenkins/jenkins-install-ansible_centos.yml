@@ -1,0 +1,43 @@
+- name: Install Jenkins
+  hosts: localhost
+  remote_user: ansible
+  become: yes
+
+  tasks:
+    - name: Jenkins repo add
+      get_url:
+        url: https://pkg.jenkins.io/redhat-stable/jenkins.repo
+        dest: /etc/yum.repos.d/jenkins.repo
+
+    - name: Import Jenkins key
+      rpm_key:
+        key: https://pkg.jenkins.io/redhat-stable/jenkins.io-2023.key
+        state: present
+
+    - name: update yum repo
+      command: sudo yum -y upgrade
+
+    - name: Install fontconfig
+      dnf:
+        name: fontconfig
+        state: latest
+
+    - name: Install Java17
+      dnf:
+        name: java-17-openjdk
+        state: latest
+
+    - name: Install jenkins service
+      dnf:
+        name: jenkins
+        state: latest
+
+    - name: enable the Jenkins to run as system service
+      service:
+        name: jenkins
+        enabled: yes
+
+    - name: start the Jenkins
+      service:
+        name: jenkins
+        state: started
